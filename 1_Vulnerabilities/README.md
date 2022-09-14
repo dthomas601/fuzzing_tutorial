@@ -116,22 +116,86 @@ Failure
 
 Next we will see what happens when an Integer Underflow occurs. Review the code below:
 
+```
+//Example from https://cwe.mitre.org/data/definitions/191.html
 
+#include<stdio.h>
+#include<limits.h>
+
+
+int main(){
+    
+    int a =5, b=6;
+    
+    size_t len = a-b;
+    
+    printf("The length is %lu\n",len);
+    printf("ULONG_MAX   :   %lu\n", (unsigned long) ULONG_MAX);
+
+    char buf[len];
+    
+    return 0;
+    
+}
+```
+
+Since a and b are declared as signed ints, the "a - b" subtraction gives a negative result (-1). However, since len is declared to be unsigned, len is cast to an extremely large positive number. As a result, the buffer buf[len] declaration uses an extremely large size to allocate on the stack, very likely more than the entire computer's memory space.
 
 
 #### Memory Leak
 (developer.ibm.com/articles/au-toughgame/)
 
-A memory leak occurs when a memory is allocated, but never freed. This can be detrimental for program that often do not terminate such as servers or daemons. If took much memory is consumed, then the functionality and performance of the underlying system can be impacted.
+A memory leak occurs when a memory is allocated, but never freed. This can be detrimental for programs that often do not terminate such as servers or daemons. If too much memory is consumed, then the functionality and performance of the underlying system can be impacted.
 
-In the following two code example we will short poor and good practices when it comes to allocating memory and releasing it when done.
+In the following code examples, we will show poor and good practices when it comes to allocating memory and releasing it when done.
 
+```
+#include <stdlib.h>
+#include <stdio.h>
+int main(void)
+{ 
+    char *line = NULL;
+    size_t size = 0;
+    /* The loop below leaks memory as fast as it can */
+    for(;;) { 
+        getline(&line, &size, stdin); /* New memory implicitly allocated */
+        int *ptr = (int *) malloc(sizeof(int));
 
---Reassignment issues
---Handling return values from a function
---Don't create orphan memory sections
+        /* <do whatever> */
+        line = NULL;
+    }
+    return 0;
+ }
+```
 
-Principle, always give back what you acquire.
+Corrected version of the above section:
+
+```
+#include <stdlib.h>
+#include <stdio.h>
+int main(void)
+{
+    char *line = NULL;
+    size_t size = 0;
+    for(;;) {
+        if (getline(&line, &size, stdin) < 0) {
+            free(line);
+            line = NULL;
+            /* Handle failure such as setting flag, breaking out of loop and/or exiting */
+        }
+        int *ptr = (int *) malloc(sizeof(int));
+
+        /* <do whatever> */
+        free(line);
+        line = NULL;
+        free(ptr);
+    }
+    return 0;
+}
+
+```
+
+A simple rule of thumb to follow: "Always give back what you acquire."
 
 
 #### Double Frees
@@ -154,7 +218,29 @@ This example is admittedly trivial and does not depict the problem in a natural 
 
 #### Heap Overflows
 
-Heap overflows are types of buffer overflows that occur with heap data.
+Heap overflows are types of buffer overflows that occur with heap data. It occurs when a chunk of memory is allocated and data is written to heap memory without performing some type of bounds checking.
 
+Below is a simple example of a heap overflow:
 
-#### Input Validation
+```
+#include<stdlib.h>
+#include<string.h>
+#include<stdio.h>
+
+void heap_of(const char *x){
+
+    char *y = malloc(20);
+    strcpy(y,x);
+
+    printf("The input was: %s\n",y);
+}
+
+int main(int argc, char **argv){
+
+    heap_of(argv[1]);
+
+    return 0;
+}
+```
+There is not bounds check for the string being provided and copied into the provided buffer.
+

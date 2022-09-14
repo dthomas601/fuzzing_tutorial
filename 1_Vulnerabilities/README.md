@@ -51,19 +51,110 @@ a signed integer between -2,147,483,848 and 2,147,483,847. (For signed integers,
 
 Lets follow an example:
 
+```
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int main(int argc, char **argv){
+
+    int val, i;
+    char *mem;
+
+    if (argc < 2)
+        exit(1);
+
+    val = atoi(argv[1]);
+
+    printf("Received input\n");
+
+    if (val > 0){
+
+        int new_alloc = val * sizeof(char *);
+        printf("Size of char * %ld\n",sizeof(char *));
+        printf("Allocation size: %i\n",new_alloc);
+        mem = malloc(new_alloc);
+        printf("Created char pointer array\n");
+        printf("INT_MAX     :   %d\n", INT_MAX);
+
+        if (mem == NULL){
+            printf("Failure\n");
+            exit(2);
+
+        }
+    }
+
+    printf("Outputting values\n");
+    for (i=0; i < val; i++){
+        mem[i] = 'A';
+        printf("%c", mem[i]);
+    }
+
+    printf("\n");
+
+    return 0;
+}
+```
+
+In the program, an argument from the command-line is needed. The program checks to make sure an agrument is provided and that that number is greater than 0. This number should be larger than 0, because if it is negative this will cause an error when passing this argument to malloc. For smaller numbers, the number of 'A's that would be allocated is printed to the screen. The failure section of code can be triggered starting at line 81, if a overflowed integer value is passed to malloc.
+
+What number would cause an overflow?
+
+```
+[afl++ 5c279dfbe5e3] /src/fuzzing_tutorial/1_Vulnerabilities (main) # ./a.out 268435456
+Received input
+Size of char * 8
+Allocation size: -2147483648
+Created char pointer array
+INT_MAX     :   2147483647
+Failure
+```
 
 
+#### Integer Underflow
 
-#### Buffer Underflow
+Next we will see what happens when an Integer Underflow occurs. Review the code below:
+
+
 
 
 #### Memory Leak
+(developer.ibm.com/articles/au-toughgame/)
+
+A memory leak occurs when a memory is allocated, but never freed. This can be detrimental for program that often do not terminate such as servers or daemons. If took much memory is consumed, then the functionality and performance of the underlying system can be impacted.
+
+In the following two code example we will short poor and good practices when it comes to allocating memory and releasing it when done.
+
+
+--Reassignment issues
+--Handling return values from a function
+--Don't create orphan memory sections
+
+Principle, always give back what you acquire.
 
 
 #### Double Frees
 
+Below is an example program that outlines a double free error.
+
+#include<stdlib.h>
+
+int main(){
+
+    char *ptr = (char*) malloc(sizeof(char));
+
+    *ptr = 'a';
+
+    free(ptr);
+    free(ptr);
+}
+
+This example is admittedly trivial and does not depict the problem in a natural way. In many cases this happens when you have more than one pointer to the same memory location. When this memory location is freed multiple times, this can lead to undefined behavior.
 
 #### Heap Overflows
+
+Heap overflows are types of buffer overflows that occur with heap data.
 
 
 #### Input Validation

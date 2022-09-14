@@ -2,8 +2,8 @@ FROM aflplusplus/aflplusplus:4.02c
 
 RUN apt-get -y update && apt-get -y upgrade
 RUN apt-get install binutils-dev libunwind-dev clang curl pkg-config libipt-dev libunwind8-dev libncurses5 zip unzip golang -y
+RUN apt update ; apt install autopoint libtool gettext libpopt-dev -y
 WORKDIR /home/
-
 
 RUN git clone --depth=1 https://github.com/google/honggfuzz.git
 WORKDIR /home/honggfuzz

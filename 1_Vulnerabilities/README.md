@@ -31,25 +31,21 @@ According to NIST, it is a security flaw, glitch, or weakness in software code t
 
 * Etc.
 
-
-
 ## Vulnerabilities Explored
 
 In each part of this section, the goal is to provide a brief introduction to the common software vulnerabilities. 
-These examples are being shown using C/C++ code examples.
-
+These examples are shown using C/C++ code examples.
 
 #### Integer Overflow
 
-An integer overflow is a type of arithmetic overflow error where the result of an operation does not fit in a given memory space.
+An integer overflow is an arithmetic overflow error where the result of an operation does not fit in given memory space.
 
-Instead of displaying an error, the result is often unexpected. It is listed as the 13th most dangerous weakness is the CWE Top 25 (cwe.mitre.org/top25/archive/2022/2022_cwe_top25.html).
+Instead of displaying an error, the result is often unexpected. It is the 13th most dangerous weakness in the CWE Top 25 (cwe.mitre.org/top25/archive/2022/2022_cwe_top25.html).
 
-In the majority of programming languages, integer values allocate a certain number of bits in memory. For example a 32-bit integer data type may store an unsigned integer between 0 and 4,294,967,295
-a signed integer between -2,147,483,848 and 2,147,483,847. (For signed integers, the most significant bit denotes if the value is positive or negative.
+In most programming languages, integer values allocate a certain number of bits in memory. For example, a 32-bit integer data type may store an unsigned integer between 0 and 4,294,967,295
+a signed integer between -2,147,483,848 and 2,147,483,847. (The most significant bit denotes if the value is positive or negative for signed integers.)
 
-
-Lets follow an example:
+Let's follow an example:
 
 ```
 #include <stdio.h>
@@ -97,7 +93,7 @@ int main(int argc, char **argv){
 }
 ```
 
-In the program, an argument from the command-line is needed. The program checks to make sure an agrument is provided and that that number is greater than 0. This number should be larger than 0, because if it is negative this will cause an error when passing this argument to malloc. For smaller numbers, the number of 'A's that would be allocated is printed to the screen. The failure section of code can be triggered starting at line 81, if a overflowed integer value is passed to malloc.
+In the program, an argument from the command line is needed. First, the program checks to ensure an argument is provided and that that number is greater than 0. This number should be larger than 0 because if it is negative this will cause an error when passing this argument to malloc. The buffer size will be represented by the number of 'A's that are printed. The failure section of code can be triggered starting at line 81 if an overflowed integer value is passed to malloc.
 
 What number would cause an overflow?
 
@@ -114,14 +110,12 @@ Failure
 
 #### Integer Underflow
 
-Next we will see what happens when an Integer Underflow occurs. Review the code below:
+Next, we will see what happens when an Integer Underflow occurs. Review the code below:
 
 ```
-//Example from https://cwe.mitre.org/data/definitions/191.html
-
+//example from https://cwe.mitre.org/data/definitions/191.html
 #include<stdio.h>
 #include<limits.h>
-
 
 int main(){
     
@@ -139,15 +133,15 @@ int main(){
 }
 ```
 
-Since a and b are declared as signed ints, the "a - b" subtraction gives a negative result (-1). However, since len is declared to be unsigned, len is cast to an extremely large positive number. As a result, the buffer buf[len] declaration uses an extremely large size to allocate on the stack, very likely more than the entire computer's memory space.
+Since a and b are declared as signed ints, the "a - b" subtraction gives a negative result (-1). However, since len is declared unsigned, len is cast to an extremely large positive number. As a result, the buffer buf[len] declaration uses an extremely large size to allocate on the stack, likely more than the entire computer's memory space.
 
 
 #### Memory Leak
 (developer.ibm.com/articles/au-toughgame/)
 
-A memory leak occurs when a memory is allocated, but never freed. This can be detrimental for programs that often do not terminate such as servers or daemons. If too much memory is consumed, then the functionality and performance of the underlying system can be impacted.
+A memory leak occurs when a memory is allocated but never freed. This can be detrimental for programs that often do not terminate, such as servers or daemons. If too much memory is consumed, then the functionality and performance of the underlying system can be impacted.
 
-In the following code examples, we will show poor and good practices when it comes to allocating memory and releasing it when done.
+In the following code examples, we will show poor and good practices regarding allocating memory and releasing it when done.
 
 ```
 #include <stdlib.h>
@@ -168,7 +162,7 @@ int main(void)
  }
 ```
 
-Corrected version of the above section:
+A corrected version of the above section:
 
 ```
 #include <stdlib.h>
@@ -195,13 +189,14 @@ int main(void)
 
 ```
 
-A simple rule of thumb to follow: "Always give back what you acquire."
+A simple rule to follow is "Always give back what you acquire."
 
 
 #### Double Frees
 
-Below is an example program that outlines a double free error.
+Below is an example program that outlines a double-free error.
 
+```
 #include<stdlib.h>
 
 int main(){
@@ -213,6 +208,7 @@ int main(){
     free(ptr);
     free(ptr);
 }
+``` 
 
 This example is admittedly trivial and does not depict the problem in a natural way. In many cases this happens when you have more than one pointer to the same memory location. When this memory location is freed multiple times, this can lead to undefined behavior.
 
@@ -242,5 +238,5 @@ int main(int argc, char **argv){
     return 0;
 }
 ```
-There is not bounds check for the string being provided and copied into the provided buffer.
+There is no bounds checking for the string being provided and copied into the provided buffer. Run the program yourself, and determine what inputs will cause it to crash. 
 

@@ -77,7 +77,7 @@ Set ```export AFL_LLVM_DENYLIST=denylist.txt``` to enable selective negative ins
 
 ## Fuzzing methods used by AFL
 
-Let's try out AFL++ on a test file. See the program provided below:
+Let's try out AFL++ on a test file. See the program pop.c provided below:
 
 ```
 #include<stdio.h>

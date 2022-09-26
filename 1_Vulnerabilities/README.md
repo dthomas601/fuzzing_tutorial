@@ -133,7 +133,17 @@ int main(){
 }
 ```
 
-Since a and b are declared as signed ints, the "a - b" subtraction gives a negative result (-1). However, since len is declared unsigned, len is cast to an extremely large positive number. As a result, the buffer buf[len] declaration uses an extremely large size to allocate on the stack, likely more than the entire computer's memory space.
+Since a and b are declared as signed ints, the "a - b" subtraction gives a negative result (-1). However, since len is declared unsigned, len is cast to an extremely large positive number. 
+
+```
+[afl++ 805609b77f1e] /src/fuzzing_tutorial/1_Vulnerabilities (main) # gcc int_underflow.c
+[afl++ 805609b77f1e] /src/fuzzing_tutorial/1_Vulnerabilities (main) # ./a.out
+The length is 18446744073709551615
+ULONG_MAX   :   18446744073709551615
+```
+
+
+As a result, the buffer buf[len] declaration uses an extremely large size to allocate on the stack, likely more than the entire computer's memory space.
 
 
 #### Memory Leak

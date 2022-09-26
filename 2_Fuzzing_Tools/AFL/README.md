@@ -131,7 +131,7 @@ This creates an instrumented executable, that AFL can use to track the coverage 
 
 #### What is an input corpus?
 
-AFL takes seed input values that can be mutated and will eventually be used to evolve and discover inputs that will generate a crash. The input to this program will be provided from user input via the ```scanf``` function. AFL then monitors the to see if the coverage of the program increases as different inputs are tested. Code coverage is a metric that can help you understand how much of your source is tested. 
+AFL takes seed input values that can be mutated and will eventually be used to evolve and discover inputs that will generate a crash. The input to this program will be provided from user input via the ```cin``` function. AFL then monitors this to see if the coverage of the program increases as different inputs are tested. Code coverage is a metric that can help you understand how much of your source has been tested. 
 
 #### Corpus creation
 

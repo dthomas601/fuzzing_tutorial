@@ -77,32 +77,40 @@ Set ```export AFL_LLVM_DENYLIST=denylist.txt``` to enable selective negative ins
 
 ## Fuzzing methods used by AFL
 
-Let's try out AFL++ on a test file. See the program pop.c provided below:
+Let's try out AFL++ on a test file. See the program pop.cpp provided below:
 
 ```
-#include<stdio.h>
-#include<assert.h>
-#include<string.h>
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
 
-int main(int argc, char** argv){
 
-        char data[100];
-        printf("Enter a string\n");
-        scanf("%s",data);
+using namespace std;
+
+
+int main() {
+
+
+        string data;
+
+        cout << "enter input string: ";
+        getline(cin, data);
 
         if (sizeof(data) >= 4){
-
                 // Test to find the input to get to the assert statement
                 if(data[0] == 'p') {
                         if(data[1] == 'o') {
                                 if(data[2] =='p') {
                                         if(data[3] == '!') {
-                                                assert(0);
+                                                        assert(0);
                                         }
                                 }
                         }
                 }
         }
+
         return 0;
 }
 ``` 
@@ -110,9 +118,9 @@ From reviewing the code there is a certain input that will trigger the assert st
 
 To start the program should be compiled using AFL compilers. In this example we will use ```afl-clang-lto```.
 
-#### pop.c compilation
+#### pop.cpp compilation
 ```
-[afl++ 87d3227744fd] # afl-clang-lto pop.c - pop.run
+[afl++ 87d3227744fd] # afl-clang-lto pop.cpp - pop.run
 afl-cc++4.02c by Michal Zalewski, Laszlo Szekeres, Marc Heuse - mode: LLVM-LTO-PCGUARD
 afl-llvm-lto++4.02c by Marc "vanHauser" Heuse <mh@mh-sec.de>
 AUTODICTIONARY: 1 string found

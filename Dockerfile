@@ -16,14 +16,10 @@ RUN git clone https://github.com/google/fuzzer-test-suite.git FTS
 RUN sed -i 's/sudo//' ./libfuzz/tutorial/libFuzzer/install-*
 RUN ./libfuzz/tutorial/libFuzzer/install-*  # Get deps
 
-RUN mkdir ~/src/
-RUN git clone https://github.com/jfoote/exploitable.git
+RUN mkdir $HOME/src/
+RUN git clone https://github.com/jfoote/exploitable.git $HOME/src/exploitable
+WORKDIR /root/src/exploitable/
+RUN python setup.py install
 RUN go install github.com/bnagy/crashwalk/cmd/cwtriage@latest && go install github.com/bnagy/crashwalk/cmd/cwdump@latest && go install github.com/bnagy/crashwalk/cmd/cwfind@latest
-
-
-
-
-
-
-
+ENV PATH=$PATH:/root/go/bin
  

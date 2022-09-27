@@ -104,7 +104,7 @@ int main() {
                         if(data[1] == 'o') {
                                 if(data[2] =='p') {
                                         if(data[3] == '!') {
-                                                        assert(0);
+                                                assert(0);
                                         }
                                 }
                         }
@@ -266,4 +266,37 @@ There are three subdirectories created within the output directory and updated i
 
 * queue (directory) - Test cases for every distinctive execution path, plus all the starting files given by the user. This is the synthesized corpus.
 
-The test cases from each of these directories can then bee tested against the program outside of the AFL fuzzing campiagn to ensure the cases actually induce the described error. 
+The test cases from each of these directories can then bee tested against the program outside of the AFL fuzzing campiagn to ensure the cases actually induce the described error.
+
+
+## AFL Testcase Minimization
+
+A key tool that is used once AFL is run on a target application is to minimize the size of the testcase input and still generate the associated crash. This is done by using the utility ```afl-tmin```. The usage for the tool can be found with the following command ```afl-tmin --help```.
+
+We will apply this to the example used earlier. The crashes for the example are located in ```output/default/crashes```. We will use the following command to minimize the input that cased a crash:
+
+```
+afl-tmin -i output/default/crashes/id:000000,sig:0c:000005+000001,time:106200,execs:103046,op:splice,rep:2.txt -o output/default/crashes/min_crash0 ./pop.run
+```
+
+* -i - Provides the input file that is going to be minimized
+* -o - Shows the minimized output file will be saved
+* ./pop.run - This is the target application that is used to conduct the minimization
+
+
+Results may vary, but here are the results before and after minimization in our example.
+
+
+##### Before Minimization
+
+```
+[afl++ 44de1e1c4e9a] /src/fuzzing_tutorial/2_Fuzzing_Tools/AFL (main) # cat output/default/crashes/id:000000,sig:06,src:000005+000001,time:106200,execs:103046,op:splice,rep:2.txt
+pop!aaal
+```
+
+##### After Minimization
+
+```
+[afl++ 44de1e1c4e9a] /src/fuzzing_tutorial/2_Fuzzing_Tools/AFL (main) # cat output/default/crashes/min_crash0
+pop!
+```

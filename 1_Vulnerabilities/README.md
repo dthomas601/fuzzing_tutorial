@@ -18,10 +18,9 @@ According to NIST, it is a security flaw, glitch, or weakness in software code t
 
 ### How can software vulnerabilities be used?
 
-
 * Remote code execution – These vulnerabilities allow someone to execute malicious code on the victim's system.
 
-* Denial of service – These vulnerabilities can allow someone to crash the software or entire system.
+* Denial of service – These vulnerabilities can allow someone to crash the software or the entire system.
 
 * Privilege Escalation – These vulnerabilities allow someone to escalate their privileges from a local account to an admin account.
 
@@ -33,12 +32,12 @@ According to NIST, it is a security flaw, glitch, or weakness in software code t
 
 ## Vulnerabilities Explored
 
-In each part of this section, the goal is to provide a brief introduction to the common software vulnerabilities. 
+In each part of these sections, the goal is to provide a brief introduction to the common software vulnerabilities. 
 These examples are shown using C/C++ code examples.
 
 #### Integer Overflow
 
-An integer overflow is an arithmetic overflow error where the result of an operation does not fit in given memory space.
+An integer overflow is an arithmetic overflow error where the result of an operation does not fit into memory space.
 
 Instead of displaying an error, the result is often unexpected. It is the 13th most dangerous weakness in the CWE Top 25 (cwe.mitre.org/top25/archive/2022/2022_cwe_top25.html).
 
@@ -107,7 +106,6 @@ INT_MAX     :   2147483647
 Failure
 ```
 
-
 #### Integer Underflow
 
 Next, we will see what happens when an Integer Underflow occurs. Review the code below:
@@ -133,7 +131,7 @@ int main(){
 }
 ```
 
-Since a and b are declared as signed ints, the "a - b" subtraction gives a negative result (-1). However, since len is declared unsigned, len is cast to an extremely large positive number. 
+Since a and b are declared as signed ints, the "a - b" subtraction gives a negative result (-1). However, since ```len``` is declared unsigned, ```len``` is cast to an extremely large positive number. 
 
 ```
 [afl++ 805609b77f1e] /src/fuzzing_tutorial/1_Vulnerabilities (main) # gcc int_underflow.c
@@ -143,13 +141,13 @@ ULONG_MAX   :   18446744073709551615
 ```
 
 
-As a result, the buffer buf[len] declaration uses an extremely large size to allocate on the stack, likely more than the entire computer's memory space.
+As a result, the buffer ``buf[len]``` declaration uses an extremely large size to allocate space on the stack, likely more than the entire computer's memory space.
 
 
 #### Memory Leak
 (developer.ibm.com/articles/au-toughgame/)
 
-A memory leak occurs when a memory is allocated but never freed. This can be detrimental for programs that often do not terminate, such as servers or daemons. If too much memory is consumed, then the functionality and performance of the underlying system can be impacted.
+A memory leak occurs when memory is allocated but never freed. This can be detrimental for programs that often do not terminate, such as servers or daemons. If too much memory is consumed, then the functionality and performance of the underlying system can be impacted.
 
 In the following code examples, we will show poor and good practices regarding allocating memory and releasing it when done.
 
@@ -220,7 +218,7 @@ int main(){
 }
 ``` 
 
-This example is admittedly trivial and does not depict the problem in a natural way. In many cases this happens when you have more than one pointer to the same memory location. When this memory location is freed multiple times, this can lead to undefined behavior.
+This example is admittedly trivial and does not naturally depict the problem. In many cases, this happens when you have more than one pointer to the same memory location. When this memory location is freed multiple times, this can lead to undefined behavior.
 
 #### Heap Overflows
 
@@ -248,5 +246,5 @@ int main(int argc, char **argv){
     return 0;
 }
 ```
-There is no bounds checking for the string being provided and copied into the provided buffer. Run the program yourself, and determine what inputs will cause it to crash. 
+No bounds are checking for the string being provided and copied into the buffer. Run the program yourself, and determine what inputs will cause it to crash. 
 

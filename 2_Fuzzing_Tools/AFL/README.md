@@ -4,7 +4,7 @@ AFL++ is a fuzzing tool that leverages instrumentation-guided genetic algorithms
 
 This code is based on AFL, which was created by Michael Zelwaski. This tool has been effective at finding a variety of software bugs.
 
-Provides capabilities for finding vulnerabilities, minimizing testcases, optimizing processing time, etc. It can also fuzz binary-only, network services, and GUI programs.
+AFL provides capabilities for finding vulnerabilities, minimizing test cases, optimizing processing time, etc. It can also fuzz binary-only, network services, and GUI programs.
 
 In the Dockerfile provided in this repo, AFL++ has been already been installed.
 
@@ -42,12 +42,13 @@ One of the first decisions that will need to be made is which AFL++ compiler wil
    use GCC mode (afl-gcc/afl-g++) (or afl-clang/afl-clang++ for clang)
 ```
 
-In using the various compilers, there are serveral flags that can be set to select different options. We point out a few key options here for LTO mode:
+In using the various compilers, several flags can be set to select different options. We point out a few key options here for LTO mode:
 
 If you instrument with LTO mode (afl-clang-fast/afl-clang-lto), the following options are available:
 
-* Splitting integer, string, float, and switch comparisons so AFL++ can easier solve these. This is an important option if you do not have a very good and large input corpus. This technique is called laf-intel or COMPCOV. To use this, set the following environment variable before compiling the target: ```export AFL_LLVM_LAF_ALL=1```. You can read more about this in instrumentation/README.laf-intel.md.
-A different technique (and usually a better one than laf-intel) is to instrument the target so that any compare values in the target are sent to AFL++ which then tries to put these values into the fuzzing data at different locations. This technique is very fast and good - if the target does not transform input data before comparison. Therefore, this technique is called input to state or redqueen. If you want to use this technique, then you have to compile the target twice, once specifically with/for this mode by setting ```AFL_LLVM_CMPLOG=1```, and pass this binary to ```afl-fuzz``` via the ```-c``` parameter. Note that you can compile also just a cmplog binary and use that for both, however, there will be a performance penalty. You can read more about this in instrumentation/README.cmplog.md.
+* Splitting integer, string, float, and switch comparisons so AFL++ can more easily solve these. This is an important option if you do not have a very good or large input corpus. This technique is called laf-intel or COMPCOV. To use this, set the following environment variable before compiling the target: ```export AFL_LLVM_LAF_ALL=1```. You can read more about this in instrumentation/README.laf-intel.md.
+
+A different technique (and usually a better one than laf-intel) is to instrument the target so that any compared values in the target are sent to AFL++ which then tries to put these values into the fuzzing data at different locations. This technique is very fast and good - if the target does not transform input data before comparison. Therefore, this technique is called input to state or redqueen. If you want to use this technique, then you have to compile the target twice, once specifically with/for this mode by setting ```AFL_LLVM_CMPLOG=1```, and pass this binary to ```afl-fuzz``` via the ```-c``` parameter. Note that you can compile also just a cmplog binary and use that for both, however, there will be a performance penalty. You can read more about this in instrumentation/README.cmplog.md.
 
 * If you use LTO, LLVM, or GCC_PLUGIN mode (afl-clang-fast/afl-clang-lto/afl-gcc-fast), you have the option to selectively instrument parts of the target that you are interested in. For afl-clang-fast, you have to use an llvm version newer than 10.0.0 or a mode other than DEFAULT/PCGUARD.
 
@@ -116,11 +117,11 @@ int main() {
 ``` 
 From reviewing the code there is a certain input that will trigger the assert statement. We will use AFL to determine this input string.
 
-To start the program should be compiled using AFL compilers. In this example we will use ```afl-clang-lto```.
+To start, the program should be compiled using AFL compilers. In this example we will use ```afl-clang-lto```.
 
 #### pop.cpp compilation
 ```
-[afl++ 87d3227744fd] # afl-clang-lto pop.cpp - pop.run
+[afl++ 87d3227744fd] # afl-clang-lto pop.cpp -o pop.run
 afl-cc++4.02c by Michal Zalewski, Laszlo Szekeres, Marc Heuse - mode: LLVM-LTO-PCGUARD
 afl-llvm-lto++4.02c by Marc "vanHauser" Heuse <mh@mh-sec.de>
 AUTODICTIONARY: 1 string found
@@ -154,21 +155,18 @@ We then create a few input files that AFL can build from:
 afl-fuzz -i in/ -o output/ pop.run
 ```
 
-* afl-fuzz - This program takes a binary and attempts a variety of fuzzing strategies, paying close attention on how they affect the execution path.
-To operate correctly, the fuzzer requires one or more starting files containing the typical input normally expected by the targeted application.
+* afl-fuzz - This program takes a binary and attempts a variety of fuzzing strategies, paying close attention to how they affect the execution path. To operate correctly, the fuzzer requires one or more starting files containing the typical input formatexpected by the targeted application.
 
 * -i - This option points to a path where input corpus files are located.
 
-* -o - This option points to the output directory that the result from AFL will be saved
+* -o - This option points to the output directory where the result from AFL will be saved
 
 * pop.run - This is the name of the executable that will be fuzzed. It was created in the above sections.
 
 
-
-
 ## AFL Tool Dashboard
 
-When the tool is executed a menu is shown to the screen that outlines what is happening. In this section, we will provide an overview of the main aspects to be aware of. The full breakdown of the dashboard is discussed here: https://github.com/AFLplusplus/AFLplusplus/blob/stable/docs/afl-fuzz_approach.md#understanding-the-status-screen
+When the tool has been executed, a menu is shown on the screen that outlines what is happening. In this section, we will provide an overview of the main aspects to be aware of. The full breakdown of the dashboard is discussed here: https://github.com/AFLplusplus/AFLplusplus/blob/stable/docs/afl-fuzz_approach.md#understanding-the-status-screen
 
 
 
@@ -178,7 +176,7 @@ When the tool is executed a menu is shown to the screen that outlines what is ha
 
 ![image](https://github.com/dthomas601/fuzzing_tutorial/blob/main/images/afl_dashboard.PNG)
 
-At the top of the image, the tool specifies the version of AFL that is running and the file that is currently being test.
+At the top of the image, the tool specifies the version of AFL that is running and the file that is currently being tested.
 
 ##### Processing Time
 
@@ -202,7 +200,7 @@ At the top of the image, the tool specifies the version of AFL that is running a
   +-----------------------+
 ```
 
-Tells you how long the fuzzer has been running and how much time has elapsed since its most recent finds. This is broken down into "paths" (a shorthand for test cases that trigger new execution patterns), crashes, and hangs.
+This section tells you how long the fuzzer has been running and how much time has elapsed since its most recent finds. This is broken down into "paths" (a shorthand for test cases that trigger new execution patterns), crashes, and hangs.
 
 
 ##### Cycle progress
@@ -228,7 +226,7 @@ This box tells you how far along the fuzzer is with the current queue cycle: it 
 
 The section provides some trivia about the coverage observed by the instrumentation embedded in the target binary.
 
-The first line in the box tells you how many branch tuples already were hit, in proportion to how much the bitmap can hold. The number on the left describes the current input; the one on the right is the value for the entire input corpus.
+The first line in the box tells you how many branch tuples already been hit, in proportion to how much the bitmap can hold. The number on the left describes the current input; the one on the right is the value for the entire input corpus.
 
 Be wary of extremes:
 
@@ -258,22 +256,22 @@ The fuzzing process will continue until you press Ctrl-C. At a minimum, you want
 
 ## AFL Output Directory
 
-There are three subdirectories created within the output directory and updated in real-time:
+There are three subdirectories created within the output directory and updated in real time:
 
-* crashes (directory) - Inside of the ```crashes``` directory will be ```README.txt``` that outlines what command-line was used to generate crashes. Also included are unique test cases that caused the tested program to receive a fatal signal (e.g., SIGSEGV, SIGILL, SIGABRT). The entries are grouped by the received signal.
+* crashes (directory) - Inside of the ```crashes``` directory will be ```README.txt``` that outlines what command was used to generate crashes. Also included are unique test cases that caused the tested program to receive a fatal signal (e.g., SIGSEGV, SIGILL, SIGABRT). The entries are grouped by the received signal.
 
 * hangs (directory) -  Unique test cases that cause the tested program to time out. The default time limit before something is classified as a hang is the larger of 1 second and the value of the -t parameter. The value can be fine-tuned by setting AFL_HANG_TMOUT, but this is rarely necessary.
 
 * queue (directory) - Test cases for every distinctive execution path, plus all the starting files given by the user. This is the synthesized corpus.
 
-The test cases from each of these directories can then bee tested against the program outside of the AFL fuzzing campiagn to ensure the cases actually induce the described error.
+The test cases from each of these directories can then be tested against the program outside of the AFL fuzzing campaign to ensure the cases induce the described error.
 
 
 ## AFL Testcase Minimization
 
-A key tool that is used once AFL is run on a target application is to minimize the size of the testcase input and still generate the associated crash. This is done by using the utility ```afl-tmin```. The usage for the tool can be found with the following command ```afl-tmin --help```.
+A key tool that is used once AFL is run on a target application is to minimize the size of the test case input and still generate the associated crash. This is done by using the utility ```afl-tmin```. The usage for the tool can be found with the following command ```afl-tmin --help```.
 
-We will apply this to the example used earlier. The crashes for the example are located in ```output/default/crashes```. We will use the following command to minimize the input that cased a crash:
+We will apply this to the example used earlier. The crashes for example are located in ```output/default/crashes```. We will use the following command to minimize the input that caused a crash:
 
 ```
 afl-tmin -i output/default/crashes/id:000000,sig:0c:000005+000001,time:106200,execs:103046,op:splice,rep:2.txt -o output/default/crashes/min_crash0 ./pop.run

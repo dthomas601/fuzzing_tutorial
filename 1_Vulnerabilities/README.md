@@ -247,4 +247,3 @@ int main(int argc, char **argv){
 }
 ```
 No bounds are checking for the string being provided and copied into the buffer. Run the program yourself, and determine what inputs will cause it to crash. 
-

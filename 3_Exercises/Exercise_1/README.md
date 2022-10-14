@@ -2,7 +2,7 @@
 
 This exercise in part was used from https://github.com/antonio-morales/Fuzzing101/tree/main/Exercise%202
 
-In this exercise we will replicate and expliot CVE-2009-3895 in libexif 0.6.14. To download and build the libexif target, follow the steps provided below:
+In this exercise, we will replicate and expliot CVE-2009-3895 in libexif 0.6.14. To download and build the libexif target, follow the steps provided below:
 
 Create a directory to save the project:
 
@@ -15,7 +15,7 @@ Download and uncompress libexif 0.6.14:
 
 ```
 wget https://github.com/libexif/libexif/archive/refs/tags/libexif-0_6_14-release.tar.gz
-tar -xzvf libexif-0_6_14-release.tar.gz	
+tar -xzvf libexif-0_6_14-release.tar.gz 
 ```
 
 Build and install libexif:
@@ -31,7 +31,7 @@ make install
 
 ##### Choosing an interface application
 
-For this example the library will be used with an inferface application (exif command-line). exif 0.6.15 can be downloaded and uncompressed by using the instructions below. The exif tool will use the libexif library downloaded previously.
+For this example, the library will be used with an interface application (exif command-line). exif 0.6.15 can be downloaded and uncompressed by using the instructions below. The exif tool will use the libexif library downloaded previously.
 
 ```
 cd $HOME/fuzzing_libexif
@@ -66,7 +66,7 @@ wget https://github.com/ianare/exif-samples/archive/refs/heads/master.zip
 unzip master.zip
 ```
 
-Test JPG images can be found can be found in the following directory:
+Test JPG images can be found in the following directory:
 
 ```
  $HOME/fuzzing_libexif/install/bin/exif $HOME/fuzzing_libexif/exif-samples-master/jpg/Canon_40D.jpg
@@ -74,12 +74,12 @@ Test JPG images can be found can be found in the following directory:
 
 ## Tasks
 
-In this portion of the assignment we will provide different tasks that each student should complete. The answers are provided below, but the goal for the user should be to complete the activities without assistance. Only look at portions of the answers when all other alternatives have been exhausted.
+In this portion of the assignment, we will provide different tasks that each student should complete. The answers are provided below, but the goal for the user should be to complete the activities without assistance. Only look at portions of the answers when all other alternatives have been exhausted.
 
 
 ### Task 1: Minimize the test corpus
 
-In fuzzing tools and software the minimizizing the test corpus that is used can save time.  Tools such as ```afl-cmin``` are used to create the smallest subset of input files that still trigger as much coverage of the target application.
+In fuzzing tools and test case minimizing, the test corpus that is used can save time.  Tools such as ```afl-cmin``` are used to create the smallest subset of input files that still trigger as much coverage of the target application.
 
 Use ```afl-cmin``` to reduce the number of files that will be used in the corpus. Apply the tools to the following directory that was downloaded in previous steps:
 
@@ -96,7 +96,7 @@ For usage instructions use ```afl-cmin --help```.
 <summary>Task 1 Answer Summary</summary>
 <br>
 
-The input directory for this task is the corpus that needs to be minimized. You should also select the location that the minimized corpus should be saved. Our selection is provided below:
+The input directory for this task is the corpus that needs to be minimized. You should also select the location where the minimized corpus should be saved. Our selection is provided below:
 
 ```
 mkdir $HOME/fuzzing_libexif/fuzz_min_corpus
@@ -111,7 +111,7 @@ afl-cmin -i $HOME/fuzzing_libexif/exif-samples-master/jpg/ -o $HOME/fuzz_min_cor
 * -i - input directory with starting corpus
 * -o - output directory for minimized files
 * $HOME/fuzzing_libexif/install/bin/exif - This is the tool that is being fuzzed
-* @@ - This marks the the location in the target’s command line where the input file name should be placed
+* @@ - this marks the location in the target’s command line where the input file name should be placed
 
 The results should look something like the following:
 
@@ -134,7 +134,7 @@ corpus minimization tool for afl++ (awk version)
 
 ### Task 2: Fuzz the target application
 
-Use ```afl-fuzz``` to find testcases that will crash the the ```$HOME/fuzzing_libexif/install/bin/exif``` application. For input use the minimized corpus that you generated in the previous task ```$HOME/fuzz_min_corpus```.
+Use ```afl-fuzz``` to find test cases that will crash the ```$HOME/fuzzing_libexif/install/bin/exif``` application. For input use the minimized corpus that you generated in the previous task ```$HOME/fuzz_min_corpus```.
 
 Save the output to ```$HOME/afl_exif_testcases```.
 
@@ -153,7 +153,7 @@ When executed, the AFL++ dashboard should load and begin testing inputs. Let thi
 
 After stopping AFL++, navigate to the ```afl_exif_testcases``` directory. Here you will find a directory structure that has been created by AFL++. What we will focus on is the crashes directory: $HOME/afl_exif_testcases --> default --> crashes.
 
-Here are all of the files that potentially causes crashes.
+Here are all of the files that potentially cause crashes.
 
 <details>
 
@@ -164,11 +164,11 @@ Display the directory that contains the files where crashes occurred:
 </details>
 
 
-### Task 4: Minimize the existing testcases that have been generated from ```afl-fuzz```.
+### Task 4: Minimize the existing test cases that have been generated from ```afl-fuzz```.
 
-Use the tool ```afl-tmin``` to reduce the size of the testcases that the were previously generated. ```afl-tmin``` shrinks the test input that caused a crash to the smallest size that still generates the same result. This tool is applied to one testcase file at a time.
+Use the tool ```afl-tmin``` to reduce the size of the test cases that were previously generated. ```afl-tmin``` shrinks the test input that caused a crash to the smallest size that still generates the same result. This tool is applied to one test case file at a time.
 
-Apply ```afl-tmin``` to the first five testcases that were created from step two.
+Apply ```afl-tmin``` to the first five test cases that were created from step two.
 
 <details>
 <summary>Task 4 Answer Summary</summary>
@@ -194,22 +194,20 @@ afl-tmin -i id\:000000\,sig\:11\,src\:000176\,time\:223135\,execs\:65494\,op\:ha
 
 ### Task 5 Analyze Crash Data
 
-From the testcases that have been created, lets understand where ```exif``` is crashing.
+From the test cases that have been created, let's understand where ```exif``` is crashing.
 
 For each crash file in ```$HOME/afl_exif_testcases/default/crashes/``` display the filename and line number where the crash was reported.
-
-
 
 <details>
 
 <summary>Task 5 Answer Summary</summary>
 <br>
 
-For each crash file that was generated, we pass them to ```exif```. When compiled, we enabled AddressSantizer libraries that help to identify memory errors in target application. 
+For each crash file that was generated, we pass them to ```exif```. When compiled, we enabled AddressSantizer libraries that help to identify memory errors in the target application. 
 
 We show an example of this below.
 
-First we execute ```exif``` with a crash file:
+First, we execute ```exif``` with a crash file:
 
 ```
 [afl++ 65b46ee0debf] ~/afl_exif_testcases/default/crashes.2022-09-23-17:22:50 (main) # $HOME/fuzzing_libexif/install/bin/exif id:000000,sig:11,src:000030,time:148428,execs:26661,op:havoc,rep:16
@@ -286,7 +284,7 @@ To then see the full backtrace of the crash, we use the ```bt``` command in the 
 
 From this example we can begin to examine the issue at ```exif-utils.c:92```
 
-We leave as an exercise to identify what line number is the cause of each error for the other files.
+We leave it as an exercise to identify what line number is the cause of each error for the other files.
 
 
 [CVE-2009-3895](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-3895)
@@ -294,15 +292,3 @@ We leave as an exercise to identify what line number is the cause of each error 
 [CVE-2012-2836](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-2836)
 
 </details>
-
-
-
-
-
-
-
-
-
-
-
-

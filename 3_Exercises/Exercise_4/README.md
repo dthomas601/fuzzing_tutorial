@@ -8,6 +8,8 @@ The Ada code that will be used is saved in ```addition_pack.adb ``` and the pack
 
 The C++ code that imports an Ada function is saved to ```int_overflow_file_read.cpp```.
 
+In this portion of the assignment, we will provide different tasks that each student should complete. The answers are provided below, but the goal for the user should be to complete the activities without assistance. Only look at portions of the answers when all other alternatives have been exhausted.
+
 ### Task 1: Compile Programs
 
 Take the provided files and compile them using AFL's compilers. (Hint: afl-g++-fast has been tested for these exercises.)

@@ -7,9 +7,9 @@ RUN apt-get update
 RUN apt-get install gnat-11 -y
 WORKDIR /home/
 
-RUN git clone --depth=1 https://github.com/google/honggfuzz.git
+RUN git clone https://github.com/google/honggfuzz.git
 WORKDIR /home/honggfuzz
-RUN make && cp /home/honggfuzz/honggfuzz /bin
+RUN make #&& cp /home/honggfuzz/honggfuzz /bin
 
 WORKDIR /home/
 RUN mv /AFLplusplus/ /home/
@@ -23,6 +23,5 @@ RUN git clone https://github.com/jfoote/exploitable.git $HOME/src/exploitable
 WORKDIR /root/src/exploitable/
 RUN python setup.py install
 RUN go install github.com/bnagy/crashwalk/cmd/cwtriage@latest && go install github.com/bnagy/crashwalk/cmd/cwdump@latest && go install github.com/bnagy/crashwalk/cmd/cwfind@latest
-ENV PATH=$PATH:/root/go/bin:/usr/lib/gcc/x86_64-linux-gnu/11/
-
- 
+ENV PATH=$PATH:/root/go/bin:/usr/lib/gcc/x86_64-linux-gnu/11/:/home/honggfuzz/hfuzz_cc:/home/honggfuzz/
+WORKDIR /home/

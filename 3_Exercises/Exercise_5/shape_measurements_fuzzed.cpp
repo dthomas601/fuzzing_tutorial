@@ -50,8 +50,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
 	if (count >= 2){
 
 		stringstream ss(fuzz_strings);
-
-		//do {
 		
 		cout << "Hello, lets measure some shapes.."<<endl;
 		cout << "Choose a shape." <<endl;

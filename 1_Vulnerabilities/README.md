@@ -108,7 +108,7 @@ Failure
 
 #### Integer Underflow
 
-Next, we will see what happens when an Integer Underflow occurs. Review the code below:
+Next, we will see what happens when an integer underflow occurs. Review the code below:
 
 ```
 //example from https://cwe.mitre.org/data/definitions/191.html
@@ -141,7 +141,7 @@ ULONG_MAX   :   18446744073709551615
 ```
 
 
-As a result, the buffer ``buf[len]``` declaration uses an extremely large size to allocate space on the stack, likely more than the entire computer's memory space.
+As a result, the buffer ``buf[len]``` declaration uses an extremely large size to allocate space on the stack, which could threaten the amount of space available on a given system.
 
 
 #### Memory Leak
@@ -154,20 +154,28 @@ In the following code examples, we will show poor and good practices regarding a
 ```
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
+#include <cstring>
 int main(void)
-{ 
-    char *line = NULL;
-    size_t size = 0;
-    /* The loop below leaks memory as fast as it can */
-    for(;;) { 
-        getline(&line, &size, stdin); /* New memory implicitly allocated */
-        int *ptr = (int *) malloc(sizeof(int));
+{
 
-        /* <do whatever> */
-        line = NULL;
+    while(true){
+
+        char* str1 = new char [30];
+
+        char* str2 = new char [20000];
+
+        strcpy(str1, "Memory leak");
+
+        str2 = str1; // Bad! Now the bytes are impossible to free.
+
+        delete [] str2; 
+        //delete [] str1; // Possible access violation. What a disaster!
+
     }
-    return 0;
- }
+
+}
+
 ```
 
 A corrected version of the above section:
@@ -175,26 +183,22 @@ A corrected version of the above section:
 ```
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
+#include <cstring>
 int main(void)
 {
-    char *line = NULL;
-    size_t size = 0;
-    for(;;) {
-        if (getline(&line, &size, stdin) < 0) {
-            free(line);
-            line = NULL;
-            /* Handle failure such as setting flag, breaking out of loop and/or exiting */
-        }
-        int *ptr = (int *) malloc(sizeof(int));
+    while(true){
 
-        /* <do whatever> */
-        free(line);
-        line = NULL;
-        free(ptr);
+        char* str1 = new char [30];
+
+        strcpy(str1, "Memory leak");
+
+        char* str2 = str1; // Bad! Now the bytes are impossible to free.
+
+        delete [] str2; 
+        //delete [] str1; // Possible access violation. What a disaster!
     }
-    return 0;
 }
-
 ```
 
 A simple rule to follow is "Always give back what you acquire."

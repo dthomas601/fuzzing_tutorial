@@ -42,40 +42,6 @@ One of the first decisions that will need to be made is which AFL++ compiler wil
    use GCC mode (afl-gcc/afl-g++) (or afl-clang/afl-clang++ for clang)
 ```
 
-In using the various compilers, several flags can be set to select different options. We point out a few key options here for LTO mode:
-
-If you instrument with LTO mode (afl-clang-fast/afl-clang-lto), the following options are available:
-
-* Splitting integer, string, float, and switch comparisons so AFL++ can more easily solve these. This is an important option if you do not have a very good or large input corpus. This technique is called laf-intel or COMPCOV. To use this, set the following environment variable before compiling the target: ```export AFL_LLVM_LAF_ALL=1```. You can read more about this in instrumentation/README.laf-intel.md.
-
-A different technique (and usually a better one than laf-intel) is to instrument the target so that any compared values in the target are sent to AFL++ which then tries to put these values into the fuzzing data at different locations. This technique is very fast and good - if the target does not transform input data before comparison. Therefore, this technique is called input to state or redqueen. If you want to use this technique, then you have to compile the target twice, once specifically with/for this mode by setting ```AFL_LLVM_CMPLOG=1```, and pass this binary to ```afl-fuzz``` via the ```-c``` parameter. Note that you can compile also just a cmplog binary and use that for both, however, there will be a performance penalty. You can read more about this in instrumentation/README.cmplog.md.
-
-* If you use LTO, LLVM, or GCC_PLUGIN mode (afl-clang-fast/afl-clang-lto/afl-gcc-fast), you have the option to selectively instrument parts of the target that you are interested in. For afl-clang-fast, you have to use an llvm version newer than 10.0.0 or a mode other than DEFAULT/PCGUARD.
-
-This step can be done either by explicitly including parts to be instrumented or by explicitly excluding parts from instrumentation.
-
-To instrument only specified parts, create a file (e.g., allowlist.txt) with all the filenames and/or functions of the source code that should be instrumented and then:
-
-Just put one filename or function (prefixing with fun: ) per line (no directory information necessary for filenames) in the file allowlist.txt.
-
-```
-Example:
-
-foo.cpp        # will match foo/foo.cpp, bar/foo.cpp, barfoo.cpp etc.
-fun: foo_func  # will match the function foo_func
-```
-
-
-Set ```export AFL_LLVM_ALLOWLIST=allowlist.txt``` to enable selective positive instrumentation.
-
-Similarly to exclude specified parts from instrumentation, create a file (e.g., denylist.txt) with all the filenames of the source code that should be skipped during instrumentation and then:
-
-Same as above. Just put one filename or function per line in the file denylist.txt.
-
-Set ```export AFL_LLVM_DENYLIST=denylist.txt``` to enable selective negative instrumentation.
-
-
-
 ## Fuzzing methods used by AFL
 
 Let's try out AFL++ on a test file. See the program pop.cpp provided below:
@@ -92,7 +58,6 @@ using namespace std;
 
 
 int main() {
-
 
         string data;
 
@@ -213,29 +178,6 @@ This section tells you how long the fuzzer has been running and how much time ha
 ```
 
 This box tells you how far along the fuzzer is with the current queue cycle: it shows the ID of the test case it is currently working on, plus the number of inputs it decided to ditch because they were persistently timing out.
-
-
-##### Map Coverage
-
-```
-  +--------------------------------------+
-  |    map density : 10.15% / 29.07%     |
-  | count coverage : 4.03 bits/tuple     |
-  +--------------------------------------+
-```
-
-The section provides some trivia about the coverage observed by the instrumentation embedded in the target binary.
-
-The first line in the box tells you how many branch tuples already been hit, in proportion to how much the bitmap can hold. The number on the left describes the current input; the one on the right is the value for the entire input corpus.
-
-Be wary of extremes:
-
-* Absolute numbers below 200 or so suggest one of three things: that the program is extremely simple; that it is not instrumented properly (e.g., due to being linked against a non-instrumented copy of the target library); or that it is bailing out prematurely on your input test cases. The fuzzer will try to mark this in pink, just to make you aware.
-Percentages over 70% may very rarely happen with very complex programs that make heavy use of template-generated code. Because high bitmap density makes it harder for the fuzzer to reliably discern new program states, we recommend recompiling the binary with AFL_INST_RATIO=10 or so and trying again (see env_variables.md). The fuzzer will flag high percentages in red. Chances are, you will never see that unless you're fuzzing extremely hairy software (say, v8, perl, ffmpeg).
-
-* The other line deals with the variability in tuple hit counts seen in the binary. In essence, if every taken branch is always taken a fixed number of times for all the inputs that were tried, this will read 1.00. As we manage to trigger other hit counts for every branch, the needle will start to move toward 8.00 (every bit in the 8-bit map hit), but will probably never reach that extreme.
-
-Together, the values can be useful for comparing the coverage of several different fuzzing jobs that rely on the same instrumented binary.
 
 
 ##### Stage progress

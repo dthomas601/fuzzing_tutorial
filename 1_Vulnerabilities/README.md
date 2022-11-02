@@ -237,7 +237,7 @@ Below is a simple example of a heap overflow:
 
 void heap_of(const char *x){
 
-    char *y = malloc(20);
+    char *y = (char*)malloc(20);
     strcpy(y,x);
 
     printf("The input was: %s\n",y);

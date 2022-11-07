@@ -82,11 +82,11 @@ int main() {
 ``` 
 From reviewing the code there is a certain input that will trigger the assert statement. We will use AFL to determine this input string.
 
-To start, the program should be compiled using AFL compilers. In this example we will use ```afl-clang-lto```.
+To start, the program should be compiled using AFL compilers. In this example we will use ```afl-clang-lto++```.
 
 #### pop.cpp compilation
 ```
-[afl++ 87d3227744fd] # afl-clang-lto pop.cpp -o pop.run
+[afl++ 87d3227744fd] # afl-clang-lto++ pop.cpp -o pop.run
 afl-cc++4.02c by Michal Zalewski, Laszlo Szekeres, Marc Heuse - mode: LLVM-LTO-PCGUARD
 afl-llvm-lto++4.02c by Marc "vanHauser" Heuse <mh@mh-sec.de>
 AUTODICTIONARY: 1 string found

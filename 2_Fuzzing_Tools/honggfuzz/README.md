@@ -2,9 +2,9 @@
 
 Honggfuzz is a command-line security fuzzing tool. It supplies and modifies input to test programs to detect and log crashes.
 
-Some of the capabilities for hongfuzz includes support for strategies such as feedback-driven and evolutionary style fuzzing.
+Some of the capabilities for honggfuzz includes support for strategies such as feedback-driven and evolutionary style fuzzing.
 
-A major benefit that hongfuzz provides is that it provides multi-process and multi-threaded capabilities  with no requirements for additional fuzzing instances. The fuzzing corpus is automatically shared and improved between all fuzzing processes.  
+A major benefit of honggfuzz is that it provides multi-process and multi-threaded capabilities with no requirements for additional fuzzing instances. The fuzzing corpus is automatically shared and improved between all fuzzing processes.  
 
 
 ## Usage Breakdown
@@ -15,12 +15,12 @@ To use honggfuzz, we will start with building the target executable. The ```hfuz
 hfuzz-clang++ pop.cpp -o pop_hfuzz.run
 ```
 
-With the executable created, we now will use ```honggfuzz``` to fuze the newly created binary.
+With the executable created, we now will use ```honggfuzz``` to fuzz the newly created binary.
 
 This is performed with the following command:
 
 ```
-honggfuzz -i in/ -s --output output/ -- ./pop_hfuzz.run
+honggfuzz -i in/ -s --output output/ --crashdir=crashes -- ./pop_hfuzz.run
 ```
 
 * -i in/ - Specify the input folder that contains the initial corpus values
@@ -32,7 +32,7 @@ honggfuzz -i in/ -s --output output/ -- ./pop_hfuzz.run
 From the fuzzing campaign, the files that crashed the executable are saved to ```--crashdir```.
 
 
-```hongfuzz``` can also be used to provide files as input to a target binary.
+```honggfuzz``` can also be used to provide files as input to a target binary.
 
 An additional capability that can be utilized is the ability to reuse fuzzing harnesses from other tools such as libFuzzer. In the next example we use the ```hi_trap_honggfuzz.cpp``` example.
 

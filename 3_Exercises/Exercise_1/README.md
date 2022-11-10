@@ -154,7 +154,7 @@ Create binaries from both binaries and fuzz both.
 
 <details>
 
-<summary>Solution Task 5 </summary>
+<summary>Solution Task 6 </summary>
 
 #### STDIN
 

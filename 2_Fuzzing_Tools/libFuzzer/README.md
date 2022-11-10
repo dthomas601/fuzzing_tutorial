@@ -72,7 +72,7 @@ In this example, we will walk through how libFuzzer triggers the crash statement
 To start we will compile this program with Clang. We will make sure to specify the fuzzer option.
 
 ```
-clang -g -O1 -fsanitize=fuzzer -o hi_trap.run hi_trap.cpp 
+clang++ -g -O1 -fsanitize=fuzzer -o hi_trap.run hi_trap.cpp 
 ```
 -g - Generates debugging information 
 -O1 - Selects the code optimization strategies that will be used for the executable
@@ -154,7 +154,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
 We then compile pop.cpp and provide test cases to be used with the resulting executable ```pop.run```:
 
 ```
-clang -g -O1 -fsanitize=fuzzer -o pop.run pop.cpp
+clang++ -g -O1 -fsanitize=fuzzer -o pop.run pop.cpp
 ``` 
 
 The input seed values that were used are shown below:
@@ -180,7 +180,7 @@ In this example, we will step through applying this tool to a library.
 
 ### Library to Test
 
-To test libraries a harness must be created to do this properly. The harnesses use libraries that have been compiled by Clang. The harness can then test different components of the library. libFuzzer provides inputs to test the input.
+To test libraries a harness must be created to do this properly. The harnesses use libraries that have been compiled by ```clang++```. The harness can then test different components of the library. libFuzzer provides inputs to test the input.
 
 We have created a test library and we will build a harness to test the provided function. The library is shown below:
 
@@ -228,7 +228,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
 From this harness, we can now compile, test, and identify any potential problems in the program. We compile the program as follows:
 
 ```
-clang -g -O1 -fsanitize=fuzzer,address printchar_driver.cpp -o driver
+clang++ -g -O1 -fsanitize=fuzzer,address printchars_driver.cpp -o driver
 ```
 
 * -g - Provides source-level debugging information

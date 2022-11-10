@@ -74,10 +74,10 @@ To start we will compile this program with Clang. We will make sure to specify t
 ```
 clang++ -g -O1 -fsanitize=fuzzer -o hi_trap.run hi_trap.cpp 
 ```
--g - Generates debugging information 
--O1 - Selects the code optimization strategies that will be used for the executable
--fsanitize=fuzzer - This flag specifies that we would like to use libFuzzer
--o - This flag specifies the name of the generated executable
+* -g - Generates debugging information 
+* -O1 - Selects the code optimization strategies that will be used for the executable
+* -fsanitize=fuzzer - This flag specifies that we would like to use libFuzzer
+* -o - This flag specifies the name of the generated executable
 
 
 To then run the executable:
@@ -186,23 +186,33 @@ We have created a test library and we will build a harness to test the provided 
 
 #### printchars.h
 ```
-//#include <iostream>
+#include <iostream>
 #include <stdio.h>
 #include<string>
+#include <assert.h>
 
+using namespace std;
 
 void printchars(std::string str){
   
-  str[0];
-  str[1];
-  str[2];
-  str[3];
-  str[4];
-  printf("Char %c\n",str[100]);
+
+  if (str.length() >= 16){
+    if (str[15] == 'z'){
+
+                  assert(0); 
+          }
+
+  
+    for(int i=0;i<str.length()-1;i++){
+      cout<<str[i];
+    }
+
+  }
+  
 }
 ```
 
-In the above function, we reference characters from a string and then print the 101st character in the provided string. In the harness below we show how we will use ```printchars.h```.
+In the above function, a crash occurs when a specific character is found in the 16th position of the string. In the harness below we show how we will use ```printchars.h```.
 
 ```
 #include <stdio.h>
@@ -217,8 +227,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   
   std::string s(reinterpret_cast<const char *>(data), size);
   
-  printf("Size of string: %zu, %s\n",size,s.c_str());
-    
   printchars(s);
 
   return 0;
@@ -233,7 +241,7 @@ clang++ -g -O1 -fsanitize=fuzzer,address printchars_driver.cpp -o driver
 
 * -g - Provides source-level debugging information
 * -O1 - Sets compiler optimizations for the produced executable
-* -fsanitize=fuzzer,address - This option specifies that libFuzzer and the AddressSanitizer are used.
+* -fsanitize=fuzzer,address - This option specifies that libFuzzer and the AddressSanitizer are used. (AddressSanitizer is a memory error detector: https://clang.llvm.org/docs/AddressSanitizer.html) 
 * -o driver - This sets the name of the produced executable.
 
 Running the executable can then be done to determine if there are any vulnerabilities that libFuzzer was able to find:
@@ -254,39 +262,4 @@ ERROR: AddressSanitizer: heap-buffer-overflow
 artifact_prefix='./'; Test unit written to ./crash-e7d7112dcf8805e43dc4dd2f027af65719f39266
 ```
 
-libFuzzer was able to identify an issue on ```line 13``` in ```printchars.h```. The input that caused the crash is saved to the file ```./crash-e7d7112dcf8805e43dc4dd2f027af65719f39266```.
-
-
-## Modes of Execution
-
-libFuzzer does provide the ability to run the tool in parallel with a shared corpus directory. This has the advantage that any new inputs found by one fuzzer process will be available to the other fuzzer processes. This is primarily controlled by the -jobs=N option, which indicates that N fuzzing jobs should be run to completion.
-
-The full libFuzzer documentation can be found here: https://www.llvm.org/docs/LibFuzzer.html#using-libfuzzer-as-a-library .
-
-
-## Heartbleed Example
-
-To apply libFuzzer to another real world example, we will replicate the Heartbleed vulnerability. (CVE-2014-0160).
-
-In Google's fuzzer-test-suite, they have already created scripts to recreate the vulnerable environment.
-
-```
-mkdir $HOME/heartbleed_libfuzzer/
-cd $HOME/heartbleed_libfuzzer/
-wget https://github.com/google/fuzzer-test-suite/archive/refs/heads/master.zip
-unzip master.zip
-```
-
-### Create Heartbleed Executable
-
-Follow the steps below, to build an executable with libfuzzer
-
-```
-cd fuzzer-test-suite
-./openssl-1.0.1f/build.sh
-./openssl-1.0.1f-fsanitize_fuzzer
-```
-
-From running this executable, we are able to see the heap-buffer-overflow associated with CVE-2014-0160.
-
-The test case that was used as a proof of concept can be reviewed here: ```openssl-1.0.1f/target.cc```.
+libFuzzer was able to identify the ```assert(0)``` statement in ```printchars.h```. The input that caused the crash is saved to the file ```./crash-e7d7112dcf8805e43dc4dd2f027af65719f39266```.

@@ -1,160 +1,113 @@
-# Exercise 2: libexif (libFuzzer)
+# Exercise 2: C++ Ada Import
 
-For this exercise, we will take the libexif package used in Exercise 1 and use libFuzzer to identify vulnerabilities.
+In this example we will build and identify vulnerabilities in a C++ program that imports an Ada function.
 
-Again we are using libexif 0.6.14 and determine if we can replicate CVEs that we explored previously. (CVE-2012-2836)
+AFL's compilers will be used to compile both the C++ and Ada components. 
 
-Below are instructions to build the project.
+The Ada code that will be used is saved in ```addition_pack.adb ``` and the package definition is found here ```addition_pack.ads```. The Ada code is written to accept two integers and produce the sum of the two values.
 
-Create a directory to save the project:
+The C++ code that imports an Ada function is saved to ```int_overflow_file_read.cpp```.
 
-```
-cd $HOME
-mkdir fuzzing_libexif_libfuzzer && cd fuzzing_libexif_libfuzzer/
-```
+In this portion of the assignment, we will provide different tasks that each student should complete. The answers are provided below, but the goal for the user should be to complete the activities without assistance. Only look at portions of the answers when all other alternatives have been exhausted.
 
-Download and uncompress libexif 0.6.14:
+### Task 1: Compile Programs
 
-```
-wget https://github.com/libexif/libexif/archive/refs/tags/libexif-0_6_14-release.tar.gz
-tar -xzvf libexif-0_6_14-release.tar.gz	
-```
+Take the provided files and compile them using AFL's compilers. (Hint: afl-g++-fast has been tested for these exercises.)
 
-Build and install libexif:
+<details>
+<summary>Solution Task 1</summary>
+
+```afl-g++-fast``` is used to compile these files and the full command shown below:
 
 ```
-cd libexif-libexif-0_6_14-release/
-./autogen.sh
-autoreconf -i
-CC=clang ./configure --enable-shared=no --prefix="$HOME/fuzzing_libexif_libfuzzer/install/"
-make
-make install
+afl-g++-fast -c addition_pack.adb int_overflow_file_read.cpp
 ```
 
-##### Downloading File Corpus
+The ```-c``` flag is used to compile only. This generates a ```.o``` and ```.ali``` file from the Ada source code and a ```.o``` file from C++. 
+
+</details>
 
 
-We will now download pictures that will be used to test libexif tool for any potential vulnerabilities. Below we download an existing archive of photos.
+### Task 2: Bind Ada file
 
-```
-cd $HOME/fuzzing_libexif_libfuzzer
-wget https://github.com/ianare/exif-samples/archive/refs/heads/master.zip
-unzip master.zip
-ls
-```
+Use ```gnatbind``` to bind ```addition_package```.
 
-##### Copy Files to Corpus Directory
+<details>
+<summary>Solution Task 2</summary>
 
-Take the JPG files and copy them to the test corpus directory.
+```gnatbind``` performs consistency check and will error if there are any discrepancies. This is highlighted below:
 
 ```
-mkdir libexif-libexif-0_6_14-release/test/my_corpus
-cp -r $HOME/fuzzing_libexif_libfuzzer/exif-samples-master/jpg/* $HOME/fuzzing_libexif_libfuzzer/libexif-libexif-0_6_14-release/test/my_corpus
+gnatbind -n addition_pack
 ```
 
-#####  Test Program 
+-n - ```addition_pack``` is not a main Ada program and this is denoted by using this flag.
 
-This program is based off test cases from exif the library. We modified ```$HOME/fuzzing_libexif_libfuzzer/libexif-libexif-0_6_14-release/test/test-mnote.c``` for our purposes. Our full modifications are shown below in :
+</details>
 
-```
- /* test-mem_libfuzzer.cpp
- */
 
-#include "../config.h"
-#include <libexif/exif-data.h>
-#include <libexif/exif-ifd.h>
-#include <libexif/exif-loader.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stddef.h>
+### Task 3: Link Ada and C++ files
 
-static int test_exif_data(ExifData *d)
-{
-    unsigned int i, c;
-    char v[1024], *p;
-    ExifMnoteData *md;
+Link the C++ and Ada components together using ```gnatlink```. 
 
-    fprintf (stdout, "Byte order: %s\n",
-        exif_byte_order_get_name (exif_data_get_byte_order (d)));
 
-    fprintf (stdout, "Parsing maker note...\n");
-    md = exif_data_get_mnote_data (d);
-    if (!md) {
-        fprintf (stderr, "Could not parse maker note!\n");
-        exif_data_unref (d);
-        return 1;
-    }
+<details>
+<summary>Solution Task 3</summary>
 
-    fprintf (stdout, "Increasing ref-count...\n");
-    exif_mnote_data_ref (md);
-
-    fprintf (stdout, "Decreasing ref-count...\n");
-    exif_mnote_data_unref (md);
-
-    fprintf (stdout, "Counting entries...\n");
-    c = exif_mnote_data_count (md);
-    fprintf (stdout, "Found %i entries.\n", c);
-    for (i = 0; i < c; i++) {
-        fprintf (stdout, "Dumping entry number %i...\n", i);
-        fprintf (stdout, "  Name: '%s'\n",
-                exif_mnote_data_get_name (md, i));
-        fprintf (stdout, "  Title: '%s'\n",
-                exif_mnote_data_get_title (md, i));
-        fprintf (stdout, "  Description: '%s'\n",
-                exif_mnote_data_get_description (md, i));
-        p = exif_mnote_data_get_value (md, i, v, sizeof (v));
-        if (p) { fprintf (stdout, "  Value: '%s'\n", v); }
-    }
-
-    return 0;
-}
-
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {   
-    
-    ExifData *d;
-    unsigned int buf_size;
-    unsigned char *buf;
-    int r;
-
-    d = exif_data_new_from_data(data, size);
-
-    r = test_exif_data(d);
-    if (r) return r;
-
-    fprintf (stdout, "Test successful!\n");
-
-    return 1; 
-}
-```
-
-##### Copy test program
-
-Before compiling we move the test file inside of the libexif test directory:
+Below is the command to build the executable ```runner_exec``` and link the C++ and Ada components.
 
 ```
-cp test-mem_libfuzzer.cpp $HOME/fuzzing_libexif_libfuzzer/libexif-libexif-0_6_14-release/test/
+gnatlink addition_pack -o runner_exec --LINK=afl-g++-fast int_overflow_file_read.o
 ```
 
-##### Compile libFuzzer Executable
+* addition_pack - This is the Ada package name that contains the function that will be imported
+* -o runner_exec - Name of the output executable that will be created
+* --LINK=afl-g++-fast - Selects the linker that will be used to combine files. 
+
+</details>
+
+### Task 4: Fuzz Executable
+
+With the Ada and C++ mixed language executable built, now we can utilized AFL to determine if any vulnerabilities exist.
+
+Fuzz the executable.
+
+<details>
+<summary>Solution Task 4</summary>
 
 ```
-clang -g -O1 -fsanitize=fuzzer,address test-mem_libfuzzer.cpp `pkg-config --cflags --libs $HOME/fuzzing_libexif_libfuzzer/install/lib/pkgconfig/libexif.pc` -o libexif.run
+afl-fuzz -i inputs/ -o outputs ./runner_exec @@
 ```
 
-* -g - Provides source-level debugging information
-* -O1 - Sets compiler optimizations for the produced executable
-* -fsanitize=fuzzer,address - This option specifies that libFuzzer and the AddressSanitizer are used.
-* `pkg-config --cflags --libs $HOME/fuzzing_libexif_libfuzzer/install/lib/pkgconfig/libexif.pc` - To build this executable, the library location must be known. libexif uses the pkg-config utility to point where these are located.
-* -o libexif.run - This is the name of the final executable that will be generated.
+* -i - Provide an input directory that contains seed testcases
+* -o - Provide an output directory where all results from the fuzzing activities will be saved
+* ./runner_exec @@ - Run the executable and specify that AFL will provide files as input
 
-Now we run the executable created. In this example we want to focus on crashes instead of memory leaks, so we provide a flag to disable references to memory leaks. We also point to the corpus to give a template of valid JPG files.
+
+From the run above, integer overflow errors will be found in the given executable.
+
+</details>
+
+### Task 5: Replicate error in GDB
+
+Following the paths used in ```Task 4```, crash files will be saved to ```./outputs/default/crashes```. Use these input files to replicate crashes with the GDB and directly running the executable.
+
+
+<details>
+<summary>Solution Task 5</summary>
+
+For simplicity we have changed the name of our example crash file to ```crashfile1```. Expect your filename to be much longer. (The normal name describes the mutations used to identify the inputs used to crash the target program.)
+
+To crash the program and identify the program source we can utilize GDB. Starting GDB with the target and parameters provided is shown below:
 
 ```
-./libexif.run -detect_leaks=0 my_corpus/
+gdb -ex=r -ex=backtrace --args ./runner_exec outputs/default/crashes/crashfile1
 ```
 
- We allow libfuzzer to run until it identifies a crash. 
+* -ex=r - Execute a single GDB command: This command runs the executable with the provided input file
+* -ex=backtrace - Execute a single GDB command: This command shows a backtrace of the executable's run and where errors occurred
+* --args ./runner_exec outputs/default/crashes/crashfile1 - The target executable and input file are provided after the --args parameter. GDB then takes and executes these commands.
 
+The resulting backtrace can then be used to identify the source of the error. 
 
- Running this application results in a heap-buffer-overflow attributed to [CVE-2012-2836
-](https://www.cvedetails.com/cve/CVE-2012-2836/).
+</details>

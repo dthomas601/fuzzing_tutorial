@@ -4,6 +4,30 @@ In this exercise use the fuzzing tools outlined previously to identify vulnerabi
 
 In this portion of the assignment, we will provide different tasks that each student should complete. The answers are provided below, but the goal for the user should be to complete the activities without assistance. Only look at portions of the answers when all other alternatives have been exhausted.
 
+## Sample input and output
+
+Below are example inputs from the program being compiled normally with ```clang++```.
+
+```
+[afl++ e7b1c6fd0a5d] /src/fuzzing_tutorial/3_Exercises/Exercise_1 (main) # ./a.out
+Enter the string that will be searched:
+```
+
+**Mary had a little lamb.**
+
+```
+Enter the character that is being searched for:
+```
+
+**a**
+
+```
+Length 23
+Search char is 'a'
+Checked string: Mary had a little lamb.
+Chars count was: 4
+```
+
 ## Task 1: Compile the files with AFL
 
 Use the files provided in this section, ```string_search.cpp``` and ```checker.h``` , to create an executable binary with AFL.
@@ -22,6 +46,20 @@ afl-clang-lto++ -o searcher string_search.cpp
 * string_search.cpp - This is the C++ source file that is used to create the executable
 
 This will create an instrumented executable to be fuzzed.
+
+</details>
+
+## Task 2: Create input seed values
+
+Create at least one seed input file for AFL to mutate and use to fuzz the created executable
+
+<details>
+
+<summary> Solution Task 2 </summary>
+
+There are multiple ways to create files that will be used as a seed value. In this example a folder ```in``` is created and we use the ```echo``` command to create these files.
+
+```echo -e "Row Row Row your boat\no" > in/input1```
 
 </details>
 

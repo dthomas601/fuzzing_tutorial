@@ -66,8 +66,8 @@ int main(int argc, char* argv[]) {
 			char buffer[100];
 			strcpy(buffer,checked_string.c_str());
 			
-			cout << "Search char is "<<search_char<<endl;
-			cout << "Checked string "<<buffer<<endl;
+			cout << "Search char is '"<<search_char<<"'"<<endl;
+			cout << "Checked string: "<<buffer<<endl;
 
 						
 			int counted_chars = count_chars(buffer, search_char);

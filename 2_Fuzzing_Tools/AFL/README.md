@@ -14,7 +14,7 @@ AFL++ Quickstart: https://github.com/AFLplusplus/AFLplusplus#quick-start-fuzzing
 
 ## Usage Breakdown
 
-One of the first decisions that will need to be made is which AFL++ compiler will be used to instrument the target. AFL++ comes with a central compiler ```afl-cc```. The AFL++ documentation provides a breakdown of which compilers to used:
+One of the first decisions that will need to be made is which AFL++ compiler will be used to instrument the target. AFL++ comes with a central compiler ```afl-cc```. The AFL++ documentation provides a breakdown of which compilers to use:
 
 ```
 +--------------------------------+

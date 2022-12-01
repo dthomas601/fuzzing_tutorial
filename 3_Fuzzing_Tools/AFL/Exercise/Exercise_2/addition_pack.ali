@@ -1,0 +1,42 @@
+V "GNAT Lib v11"
+A -O1
+A -fplugin=/usr/local/bin/../lib/afl//afl-gcc-pass.so
+A -fno-if-conversion
+A -fno-if-conversion2
+A -g
+A -g
+A -funroll-loops
+A -mtune=generic
+A -march=x86-64
+P ZX
+
+RN
+
+U addition_pack%b	addition_pack.adb	22095967 NE OO PK IL
+
+U addition_pack%s	addition_pack.ads	c7c837d9 EE NE OO PK IL
+W interfaces%s		interfac.ads		interfac.ali
+W interfaces.c%s	i-c.adb			i-c.ali
+
+D ada.ads		20210728065506 76789da1 ada%s
+D a-unccon.ads		20210728065506 0e9b276f ada.unchecked_conversion%s
+D addition_pack.ads	20221007152352 01eccd9a addition_pack%s
+D addition_pack.adb	20221007153702 23e594fd addition_pack%b
+D interfac.ads		20210728065506 edec285f interfaces%s
+D i-c.ads		20210728065506 c624fa43 interfaces.c%s
+D system.ads		20210728065506 a2da961d system%s
+D s-exctab.ads		20210728065506 54135002 system.exception_table%s
+D s-parame.ads		20210728065506 4752c4cb system.parameters%s
+D s-stalib.ads		20210728065506 0f2d51ff system.standard_library%s
+G a e
+G c Z s b [add_func addition_pack 5 13 none]
+X 3 addition_pack.ads
+3K9*addition_pack 11l5 11e18 4|1b14 6l5 6t18
+5V13*Add_Func{integer} 5>23 5>25 4|2b18 5l13 5t21
+5i23 a{integer} 4|2b27 4r24
+5i25 b{integer} 4|2b29 4r26
+X 5 interfac.ads
+38K9*Interfaces 3|1r6 1r24 5|231e15
+X 6 i-c.ads
+18K20*C 3|1w17 1r35 6|232e17
+

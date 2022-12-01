@@ -6,7 +6,7 @@ In the assignment, different tasks will be outlined for students to complete. Th
 
 ## Fuzz the Mortgage class constructor
 
-The Mortgage class has been provided below:
+The Mortgage class (mortgage.h) has been provided below:
 
 ```
 #include <iostream>
@@ -86,7 +86,7 @@ bool Mortgage::loan_duration_valid(int years){
 }
 ```
 
-A proof of concept driver program is shown below:
+A proof of concept driver program (mortgage_base.cpp) is shown below:
 
 ```
 #include <iostream>
@@ -141,7 +141,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size){
 
 libFuzzer provides inputs via the ```Data``` variable and shows the lengths of these inputs with ```Size```.
 
-Recast these inputs as a ```string``` looking at the example harness from the ```Overview``` section.
+Recast these inputs as a ```string``` looking at the example harness from the ```2_Harness_Building``` example.
 
 
 <details>
@@ -157,7 +157,7 @@ string fuzz_strings = string(reinterpret_cast<const char*> (Data),Size);
 
 ## Task 3: Seperate strings into object parameters
 
-The ```Mortgage``` constructor takes four values to calculate a monthly mortgage payment: ```year_length, rate, home_value, down```. These correlate to the length of the mortgage, the interest rate that will be used, the value of the home, and finally the downpayment that will be provided.
+The ```Mortgage``` constructor takes four values to calculate a monthly mortgage payment: ```year_length, rate, home_value, down```. These correlate to the length of the mortgage, the interest rate that will be used, the value of the home, and finally the down payment that will be provided.
 
 In this example, use a whitespace-delimited string to seperate each parameter. Create a function that checks to make sure the proper number of parameters are being provided by libFuzzer.
 
@@ -215,7 +215,7 @@ Hint: For parsing symbol delimited strings, see the following tutorial:
 <details>
 <summary>Solution Task 4</summary>
 
-Here are two functions used to ensure that both we have valid whole numbers and valid floats.
+Here are two functions used to ensure that we have valid int, float, and double values.
 
 ```
 bool isDouble( string myString ) {
@@ -250,7 +250,7 @@ bool isFloat( string myString ) {
 
 
 
-The following show the ```if``` statements used to validate inputs:
+The following shows the ```if``` statements used to validate inputs:
 
 ```
 // Get next string with ',' used as the delimiter
@@ -312,13 +312,13 @@ The following show the ```if``` statements used to validate inputs:
 
 ## Task 5: Test Mortgage Constructor
 
-From the value collected previously, pass them as arguments into the ```Mortgage``` constructor. The class does throw errors so they will need to be handled with a ```try/catch``` statement. Review the errors throw in the ```Mortgage``` class and account for them in the harness.
+From the value collected previously, pass them as arguments into the ```Mortgage``` constructor. The class does throw errors so they will need to be handled with a ```try/catch``` statement. Review the errors thrown in the ```Mortgage``` class and account for them in the harness.
 
 
 <details>
 <summary>Solution Task 5</summary>
 
-The full harness including the try/catch statement is provided below:
+The full harness ```mortgage_fuzz.cpp``` including the try/catch statement is provided below:
 
 ```
 #include <iostream>

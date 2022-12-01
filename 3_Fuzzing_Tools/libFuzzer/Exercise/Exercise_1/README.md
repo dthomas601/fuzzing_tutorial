@@ -29,35 +29,8 @@ Chars count was: 4
 
 In this example we will fuzz the functions in ```checker.h```.
 
-## Task 1: Create input seed values
 
-Create at least one seed input file for libFuzzer to mutate and use to fuzz the created executable. This is not a requirement for libFuzzer, but helps to streamline the fuzzing campaign. The input file should include two lines with the first being the string that should be searched and the second line containing the character to search for.
-
-<details>
-
-<summary> Solution Task 1 </summary>
-
-There are multiple ways to create files that will be used as a seed value. In this example a folder ```in``` is created and we use the ```echo``` command to create these files.
-
-```
-mkdir in
-```
-
-```echo -e "Row Row Row your boat\no" > in/input1```
-
-Second example is provide below as well:
-
-```echo -e "jaielafilena0ofna;amfk\na" > in/input2```
-
-To show these files, you can show something like the following:
-
-```
-cat in/*
-```
-
-</details>
-
-## Task 2: Perform the same action with libFuzzer
+## Task 1: Create a fuzzing harness for libFuzzer
 
 Lets now modify the source file so that libFuzzer can be used. The harness structure for libFuzzer requires that we use the function ```extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) ```. (
 Refer to the example 3_Fuzzing_Tools/libFuzzer)
@@ -76,7 +49,7 @@ Now rewrite the ```string_search.cpp``` source code to be used by libFuzzer. Com
 
 <details>
 
-<summary>Solution Task 2 </summary>
+<summary>Solution Task 1 </summary>
 
 The restructured source code can be found in ```string_search_harness.cpp```
 
@@ -89,13 +62,13 @@ clang++ -g -O1 -fsanitize=fuzzer -o searcher_libfuzzer string_search_harness.cpp
 </details>
 
 
-## Task 3: Execute the libFuzzer binary
+## Task 2: Execute the libFuzzer binary
 
 Run the libFuzzer binary.
 
 <details>
 
-<summary>Solution Task 3 </summary>
+<summary>Solution Task 2 </summary>
 
 The command is as follows:
 

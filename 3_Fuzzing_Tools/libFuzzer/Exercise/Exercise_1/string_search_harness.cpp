@@ -89,7 +89,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
 		else if (sizeof(search_char) != 1){
 			
 			cout <<"The search character should be of size 1"<<endl;
-			exit(0);	
+			return 0;	
 		}
 		
 		else{

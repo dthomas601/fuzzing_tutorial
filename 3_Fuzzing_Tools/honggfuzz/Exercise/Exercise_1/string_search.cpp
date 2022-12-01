@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
 		cout <<"The checked string should be at least of length 1. \n";
 		cout <<checked_string<< " " <<checked_string.length()<<endl;
 		fflush(stdout);
-		exit(0);
+		return 0;
 		
 		
 	}
@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
 	else if (sizeof(search_char) != 1){
 		
 		cout <<"The search character should be of size 1"<<endl;
-		exit(0);	
+		return 0;	
 	}
 	
 	else{

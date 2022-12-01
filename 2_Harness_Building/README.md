@@ -1,8 +1,6 @@
 # Building a fuzz harness
 
-This section provides guidance on how a fuzzing harness should be created.
-
-This course will be taught through examples.
+This section provides guidance on how a fuzzing harness should be built using examples.
 
 Each of the tools for this course can use the harness function ```LLVMFuzzerTestOneInput```.
 
@@ -32,7 +30,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
 }
 ```
 
-This program basically checks inputs from a fuzzer and crashes the program when the string ```HI!``` is provided.
+This program basically checks inputs from a fuzzer and crashes the program with ```__builtin_trap();``` when the string ```HI!``` is provided.
 
 ## Fuzzing Harness Basics
 
@@ -50,7 +48,7 @@ Best practices for a fuzzing environment based on the above-mentioned harness:
 
 AFL and honggfuzz can better test stand-alone programs compared to libFuzzer. Both tools have options to take input strings from STDIN versus being passed in as parameters. Both tools can also support the above-mentioned format as well. This allows for a single harness to be used for multiple tools.
 
-# Example Program
+# Example Program (patient_class.h)
 
 ```
 #include <iostream>
@@ -137,7 +135,7 @@ void patient::setName(const char * _name){
 
 This header file contains a class and associated member functions that can be tested. A fuzzing harness will be created to test each of the provided functions.
 
-Our fuzzing harness for this example is provided below:
+Our fuzzing harness for this example ```patient_fuzz.cpp``` is provided below:
 
 ```
 #include "patient_class.h"
@@ -228,7 +226,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size){
 We will now build and run the file shown above. We will use the standard libFuzzer first.
 
 ```
-clang++ -g -O1 -fsanitize=fuzzer -o fuzz_class.run fuzz_class.cpp 
+clang++ -g -O1 -fsanitize=fuzzer -o patient_fuzz.run patient_fuzz.cpp 
 ```
 
 * -g - Provides source-level debugging information
@@ -240,19 +238,19 @@ clang++ -g -O1 -fsanitize=fuzzer -o fuzz_class.run fuzz_class.cpp
 To run the generated executable, simply perform the following:
 
 ```
-./fuzz_class.run
+./patient_fuzz.run
 ```
 
 Additional options called Sanitizers can also be provided to identify other potential vulnerabilities. Below we add the option for using an AddressSanitizer (ASan). It is used to identify potential buffer overflows. It pads stack and heap allocations with "poison memory" and tests if the fuzzer input tries to use these bad areas.
 
 ```
-clang++ -g -O1 -fsanitize=fuzzer,address -o fuzz_class_asan.run fuzz_class.cpp
+clang++ -g -O1 -fsanitize=fuzzer,address -o patient_fuzz_asan.run patient_fuzz.cpp 
 ```
 
 Again to start the example simply run the generated executable:
 
 ```
-./fuzz_class_asan.run
+./patient_fuzz_asan.run
 ```
 
 The crash that is generated should provide an input that describes where buffer overflows could occur.

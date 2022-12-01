@@ -66,14 +66,25 @@ gnatlink addition_pack -o runner_exec --LINK=afl-g++-fast int_overflow_file_read
 
 </details>
 
-### Task 4: Fuzz Executable
+### Task 4: Create seed values
+
+Create seed values that can be used with AFL. AFL requires at least one input to run properly. Create an input file with two numbers seperate by a space. Save it to a directory called ```inputs```.
+
+<details>
+<summary>Solution Task 4</summary>
+
+echo "12 45" > inputs/test1
+
+</details>
+
+### Task 5: Fuzz Executable
 
 With the Ada and C++ mixed language executable built, now we can utilized AFL to determine if any vulnerabilities exist.
 
 Fuzz the executable.
 
 <details>
-<summary>Solution Task 4</summary>
+<summary>Solution Task 5</summary>
 
 ```
 afl-fuzz -i inputs/ -o outputs ./runner_exec @@
@@ -90,7 +101,7 @@ From the run above, integer overflow errors will be found in the given executabl
 
 ### Task 5: Replicate error in GDB
 
-Following the paths used in ```Task 4```, crash files will be saved to ```./outputs/default/crashes```. Use these input files to replicate crashes with the GDB and directly running the executable.
+Following the paths used in ```Task 5```, crash files will be saved to ```./outputs/default/crashes```. Use these input files to replicate crashes with the GDB and directly running the executable.
 
 
 <details>

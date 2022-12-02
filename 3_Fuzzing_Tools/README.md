@@ -8,7 +8,7 @@ The tools below are the those that will be used in this course:
 
 
 ### honggfuzz
-* honggfuzz Main Page: https://honggfuzz.dev/
+* Project Page: https://honggfuzz.dev/
 * Github: https://github.com/google/honggfuzz
 
 

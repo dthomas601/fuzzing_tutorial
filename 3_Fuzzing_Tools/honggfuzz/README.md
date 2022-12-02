@@ -1,11 +1,13 @@
 # Honggfuzz
 
-Honggfuzz is a command-line security fuzzing tool. It supplies and modifies input to test programs to detect and log crashes.
+honggfuzz is a command-line security fuzzing tool. It supplies and modifies input to test programs to detect and log crashes.
 
 Some of the capabilities for honggfuzz includes support for strategies such as feedback-driven and evolutionary style fuzzing.
 
-A major benefit of honggfuzz is that it provides multi-process and multi-threaded capabilities with no requirements for additional fuzzing instances. The fuzzing corpus is automatically shared and improved between all fuzzing processes.  
+A major benefit of honggfuzz is that it provides multi-process and multi-threaded capabilities with no requirements for additional fuzzing instances. The fuzzing corpus is automatically shared and improved between all fuzzing processes.
 
+* Github Repo: https://github.com/google/honggfuzz
+* Project Page: https://honggfuzz.dev/
 
 ## Usage Breakdown
 
